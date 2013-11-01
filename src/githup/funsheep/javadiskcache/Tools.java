@@ -1,7 +1,7 @@
 /**
  * 
  */
-package funsheep.githup.javadiskcache;
+package githup.funsheep.javadiskcache;
 
 import java.io.Closeable;
 import java.io.File;
