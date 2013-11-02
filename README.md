@@ -1,11 +1,9 @@
 # javadiskcache #
-=============
 
 A robust disk cache that works over several parallel running jVMs.
 
  
- ## Features: ##
-=============
+## Features ##
 
  * Transparent fileCache for InputStream with simple wrapping mechanism.
  * Detects changes to the original source using its size and its 'last modified' time stamp.
@@ -15,10 +13,9 @@ A robust disk cache that works over several parallel running jVMs.
  * Multi-Threaded Support and Multi-jVM support. That means, the file cache is thread-save but also jVM-save. Several java instances use the same cache. This works for arbitrarily requested sources. Only the source ID has to be identical.
  * Global cache-size limit with LRU-Schema (also works over several jVMs).
 
- ## Usage ##
-=============
+## Usage ##
 
- ### Setup ###
+### Setup ###
  
  The standard settings are:
   * the cache can use up to one GB of disk space
@@ -26,19 +23,19 @@ A robust disk cache that works over several parallel running jVMs.
 
  However, initially, these values can be changed with
  
- '''java
- FileCache#setup(String, long)
- '''
+```java
+FileCache.setup(String, long)
+```
  
  For example, to setup a cache that uses an application specific cache directory 'myapp' and uses one MB at max. simply call
  
- '''java
- FileCache#setup("myapp", 1 * 1024 * 1024);
- '''
+```java
+FileCache.setup("myapp", 1 * 1024 * 1024);
+```
  
  before any cache request!
  
- ### Request and Cache Content ###
+### Request and Cache Content ###
  
  The file cache provides two arbitrary methods to request content:
   * `java.io.InputStream`
@@ -56,26 +53,24 @@ A robust disk cache that works over several parallel running jVMs.
  Therefore, it can be much more efficient to first check if the specific content is cached or not.
  This can be done by:
  
- '''java
- String uID = ...; //unique id for the source
- long size = ...; //size of the source content in bytes
- long timestamp = ...; //last modified time stamp of the content
- InputStream cached = FileCache.instance().getCachedInputStream(uID, null, size, timestamp);
- if (cached == null)
- {
- 	 InputStream content = ...; //open connection to the source to actually cache the content
- 	 cached = FileCache.instance().getCachedInputStream(uID, content, size, timestamp);
- }
- // ... use 'cached' here
- '''
+```java
+String uID = ...; //unique id for the source
+long size = ...; //size of the source content in bytes
+long timestamp = ...; //last modified time stamp of the content
+InputStream cached = FileCache.instance().getCachedInputStream(uID, null, size, timestamp);
+if (cached == null)
+{
+	 InputStream content = ...; //open connection to the source to actually cache the content
+	 cached = FileCache.instance().getCachedInputStream(uID, content, size, timestamp);
+}
+// ... use 'cached' here
+```
  
- An implementation of this mechanism is readily provided by the `ICacheable` interface.
+An implementation of this mechanism is readily provided by the `ICacheable` interface.
  
 ## Requirements ##
-=============
  * JRE >= v1.7
  * commons-codec >= v1.8 (is issued under the Apache License v2.0)
 
 ## License ##
-=============
  Mozilla Public License v2.0
