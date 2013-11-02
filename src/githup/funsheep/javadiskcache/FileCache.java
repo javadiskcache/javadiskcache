@@ -5,7 +5,7 @@
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
 	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
-*/
+ */
 package githup.funsheep.javadiskcache;
 
 import java.io.BufferedInputStream;
@@ -38,30 +38,46 @@ import java.util.UUID;
 
 /**
  * Transparent fileCache for {@link InputStream} implementation with simple wrapping mechanism.
- * Features:
- * Detects multiple streams for a given id and automatically closes additional streams.
- * Checks free-space on drive prior to storing a file.
- * Multi-Thread Support and Multi-JVM support.
+ * Features: Detects multiple streams for a given id and automatically closes additional streams.
+ * Checks free-space on drive prior to storing a file. Multi-Thread Support and Multi-JVM support.
  * Global cache-size limit with LRU-Schema.
- *
+ * 
  * @author cgrote
+ * @author funsheep
  */
-public class FileCache
+class FileCache
 {
-	public static long CacheSizeLimit = 1 * 1024 * 1024 * 1024; // GB
 	private static final long NOT_AVAILABLE = -1;
-	private static final String UniqueID = Tools.toBase64String(UUID.randomUUID().toString());
 	private static final Logger LOGGER = Logger.getLogger();
-	private static final Path cacheDir = Paths.get(userTempDir(), "d3fact_cache");
-	private static final Path boundlessDir = Paths.get(cacheDir.toString(), "boundless");
-	private static final Path modifiedDir = Paths.get(cacheDir.toString(), "lastModified");
-	private static long currentSize = 0; // in Bytes
+	
+	private static FileCache INSTANCE = null;
 
-	private static final DirectoryContent dirWatcher;
+	private final long sizelimit; // GB
+	private final String uID = Tools.toBase64String(UUID.randomUUID().toString());
+	private final Path cacheDir;
+	private final Path boundlessDir;
+	private final Path modifiedDir;
+	private final DirectoryContent dirWatcher;
 
-	static
+	private long currentSize = 0; // in Bytes
+
+
+	private FileCache() throws IOException
 	{
-		dirWatcher = DirectoryContent.getWatcher(cacheDir);
+		this(null, 1 * 1024 * 1024 * 1024);
+	}
+	
+	private FileCache(String name, long limit) throws IOException
+	{
+		if (name != null && name.length() > 0)
+			name += '_';
+		else
+			name = "";
+		this.sizelimit = limit;
+		this.cacheDir = Paths.get(Tools.ensureTempDir(), name + "cache");
+		this.boundlessDir = Paths.get(cacheDir.toString(), "boundless");
+		this.modifiedDir = Paths.get(cacheDir.toString(), "lastModified");
+		this.dirWatcher = DirectoryContent.getWatcher(cacheDir);
 		try
 		{
 			Files.createDirectories(cacheDir);
@@ -75,8 +91,7 @@ public class FileCache
 		}
 	}
 
-	public static synchronized ReadableByteChannel getCachedByteChannel(String uid, InputStream input, long size, long lastModified)
-		throws IOException
+	public synchronized ReadableByteChannel getCachedByteChannel(String uid, InputStream input, long size, long lastModified) throws IOException
 	{
 		return Channels.newChannel(getCachedInputStream(uid, input, size, lastModified));
 	}
@@ -85,12 +100,11 @@ public class FileCache
 	 * If input is <i>null</i> it will return the local cache file with a matching id, size and
 	 * lastModified time-stamp. Use <i>-1</i> for size and lastModified to get the latest version of
 	 * the file. return null if no matching complete file can be found.
-	 *
-	 * @param id: unique name of the resource, should not change with different versions of the same
-	 *            file.
+	 * 
+	 * @param id : unique name of the resource, should not change with different versions of the
+	 *            same file.
 	 */
-	public static synchronized InputStream getCachedInputStream(String id, InputStream input, long size, long lastModified)
-		throws IOException
+	public synchronized InputStream getCachedInputStream(String id, InputStream input, long size, long lastModified) throws IOException
 	{
 		if (input == null)
 		{
@@ -177,7 +191,6 @@ public class FileCache
 					return stream;
 				}
 			}
-
 			else if (Files.isWritable(file)) // try resume
 			{
 				LOGGER.info("Resume data in cache " + id);
@@ -217,10 +230,11 @@ public class FileCache
 		}
 
 		LOGGER.info("No data cached " + id);
-		return input; // everything else failed, so just load from stream directly without caching
+		return input; // everything else failed, so just load from stream
+						// directly without caching
 	}
 
-	private static long currentSize()
+	public long currentSize()
 	{
 		currentSize = 0;
 		final ArrayDeque<Path> content = dirWatcher.getActualContent();
@@ -233,11 +247,16 @@ public class FileCache
 		}
 		return currentSize;
 	}
+	
+	public long sizeLimit()
+	{
+		return this.sizelimit;
+	}
 
 	/**
 	 * check if space is Available, if not try to free it up and create file
 	 */
-	private static boolean spaceAvailable(Path file, long size)
+	private boolean spaceAvailable(Path file, long size)
 	{
 		try
 		{
@@ -251,11 +270,11 @@ public class FileCache
 
 		long boundlessSize = boundless();
 
-		if (currentSize + boundlessSize > CacheSizeLimit)
+		if (currentSize + boundlessSize > sizelimit)
 		{
 			TreeMap<FileTime, Path> files = getLastModifiedFiles();
 
-			while (currentSize + boundlessSize > CacheSizeLimit && !files.isEmpty())
+			while (currentSize + boundlessSize > sizelimit && !files.isEmpty())
 			{
 				Path f = files.pollFirstEntry().getValue();
 				Path p = f.getParent();
@@ -268,12 +287,12 @@ public class FileCache
 				f = p.getParent().resolve(f);
 
 				delete(f);
-				if (currentSize + boundlessSize < CacheSizeLimit)
+				if (currentSize + boundlessSize < sizelimit)
 					currentSize();
 			}
 			try
 			{
-				if (currentSize + boundlessSize > CacheSizeLimit
+				if (currentSize + boundlessSize > sizelimit
 					|| (size != -1 && Files.getFileStore(cacheDir).getUnallocatedSpace() < size))
 				{
 					Files.delete(file);
@@ -297,17 +316,17 @@ public class FileCache
 		return true;
 	}
 
-	private static long boundless()
+	private long boundless()
 	{
 		return DirectorySize.directorySize(boundlessDir, true);
 	}
 
-	private static TreeMap<FileTime, Path> getLastModifiedFiles()
+	private TreeMap<FileTime, Path> getLastModifiedFiles()
 	{
 		return DirectoryContent.directoryContentLastAccess(modifiedDir, true);
 	}
 
-	private static InputStream write(Path file, InputStream in)
+	private InputStream write(Path file, InputStream in)
 	{
 		final Path lockFile = writeLock(file);
 		FileLock wlock = createLock(lockFile);
@@ -318,7 +337,7 @@ public class FileCache
 		return new LockedInputStream(in, wlock, lockFile);
 	}
 
-	private static InputStream read(Path file, InputStream in)
+	private InputStream read(Path file, InputStream in)
 	{
 		FileLock rlock = makeReadlock(file);
 		if (rlock == null) // wait a bit, than return
@@ -339,7 +358,7 @@ public class FileCache
 
 	/**
 	 * Check file locks, perform cleanup if necessary.
-	 *
+	 * 
 	 * @return true if lock is valid, false otherwise.
 	 */
 	private static boolean checkLock(final Path lockFile)
@@ -406,7 +425,7 @@ public class FileCache
 	 * try to delete a file. return true if no other process is reading the file and it could be
 	 * deleted.
 	 */
-	private static boolean delete(Path file)
+	private boolean delete(Path file)
 	{
 		if (checkLock(writeLock(file)) || checkLock(readLocks(file)))
 		{
@@ -445,7 +464,7 @@ public class FileCache
 
 	}
 
-	private static FileLock createLock(Path lockFile)
+	private FileLock createLock(Path lockFile)
 	{
 
 		try
@@ -484,7 +503,7 @@ public class FileCache
 		}
 	}
 
-	private static void removeLock(Path lockFile, FileLock lock)
+	private void removeLock(Path lockFile, FileLock lock)
 	{
 
 		try
@@ -502,7 +521,7 @@ public class FileCache
 
 	}
 
-	private static FileLock makeReadlock(Path file)
+	private FileLock makeReadlock(Path file)
 	{
 		final Path rLock = readLock(file);
 		final Path dLock = deleteLock(file);
@@ -530,20 +549,20 @@ public class FileCache
 		return null;
 	}
 
-	static Path getCacheDir()
+	public Path getCacheDir()
 	{
-		return Paths.get(userTempDir(), "d3fact_cache");
+		return this.cacheDir;
 	}
 
-	static Path getCacheFile(String id, long size, long lastModified)
+	Path getCacheFile(String id, long size, long lastModified)
 	{
 		final String filename = getUID(id, size, lastModified);
 		if (size == -1)
-			return Paths.get(userTempDir(), "d3fact_cache", "boundless", filename);
-		return Paths.get(userTempDir(), "d3fact_cache", filename);
+			return this.boundlessDir.resolve(filename);
+		return this.cacheDir.resolve(filename);
 	}
 
-	static Path getLatestVersionCacheFile(String id)
+	Path getLatestVersionCacheFile(String id)
 	{
 		Path filename = null;
 		long lastModified = 0;
@@ -558,7 +577,7 @@ public class FileCache
 			}
 		}
 		if (filename == null)
-			filename = Paths.get(userTempDir(), "d3fact_cache", "boundless", getUID(id, NOT_AVAILABLE, NOT_AVAILABLE));
+			filename = this.boundlessDir.resolve(getUID(id, NOT_AVAILABLE, NOT_AVAILABLE));
 
 		if (Files.notExists(filename))
 			return null;
@@ -632,9 +651,9 @@ public class FileCache
 		return file.resolveSibling("lastModified" + File.separatorChar + file.getFileName() + ".modified");
 	}
 
-	private static Path readLock(Path file)
+	private Path readLock(Path file)
 	{
-		return file.resolveSibling("rlock" + File.separatorChar + file.getFileName() + UniqueID + ".rlock");
+		return file.resolveSibling("rlock" + File.separatorChar + file.getFileName() + uID + ".rlock");
 	}
 
 	private static Path readLocks(Path file)
@@ -677,30 +696,21 @@ public class FileCache
 
 		return true; // unknown file size, assume it's complete.
 	}
-	
-	private static String USER_TEMP_DIR;
-	public static final String userTempDir()
-	{
-		if (USER_TEMP_DIR == null)
-		{
-			StringBuilder sb = new StringBuilder(30);
-			String tmpdir = System.getProperty("java.io.tmpdir");
-			if (tmpdir.charAt(tmpdir.length()-1) != File.separatorChar)
-				tmpdir += File.separatorChar;
-			sb.append(tmpdir);
-			sb.append(Tools.getHex(System.getProperty("user.name").getBytes()));
-			sb.append(File.separatorChar);
-			USER_TEMP_DIR = sb.toString();
 
-			File path = new File(USER_TEMP_DIR);
-			if (!path.exists() && !path.mkdirs())
-			{
-				USER_TEMP_DIR = tmpdir;
-				LOGGER.warn("Could not create directory structure for path: " + path.toString() + " !");
-			}
-			LOGGER.info("Using temporary directory: " + USER_TEMP_DIR);
+	public static final synchronized FileCache instance() throws IOException
+	{
+		if (INSTANCE == null)
+		{
+			INSTANCE = new FileCache();
 		}
-		return USER_TEMP_DIR;
+		return INSTANCE;
+	}
+
+	public static final synchronized void setup(String name, long limit) throws IOException
+	{
+		if (INSTANCE != null)
+			throw new IllegalStateException("FileCache already initialized.");
+		INSTANCE = new FileCache(name, limit);
 	}
 
 }

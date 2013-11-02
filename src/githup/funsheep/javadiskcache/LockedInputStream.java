@@ -18,7 +18,7 @@ import java.nio.file.Path;
 /**
  * Release Lock on close and optionally delete files. Useful if lock-file != stream-file
  */
-public class LockedInputStream extends FilterInputStream
+class LockedInputStream extends FilterInputStream
 {
 	private final FileLock lock;
 	private final Path[] files;
@@ -26,7 +26,7 @@ public class LockedInputStream extends FilterInputStream
 	/**
 	 * @param lock The lock to be released on close.
 	 */
-	public LockedInputStream(InputStream in, FileLock lock)
+	LockedInputStream(InputStream in, FileLock lock)
 	{
 		super(in);
 		this.lock = lock;
@@ -37,13 +37,16 @@ public class LockedInputStream extends FilterInputStream
 	 * @param lock The lock to be released on close.
 	 * @param files Files to be deleted when this stream is closed.
 	 */
-	public LockedInputStream(InputStream in, FileLock lock, Path... files)
+	LockedInputStream(InputStream in, FileLock lock, Path... files)
 	{
 		super(in);
 		this.lock = lock;
 		this.files = files;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void close() throws IOException
 	{

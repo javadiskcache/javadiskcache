@@ -17,14 +17,14 @@ import java.nio.channels.SeekableByteChannel;
 /**
  * Load first from channel then from Stream.
  */
-public class HybridInputStream extends FilterInputStream
+class HybridInputStream extends FilterInputStream
 {
 	private final SeekableByteChannel chan;
 	private ByteBuffer buffer = ByteBuffer.allocate(8192);
 	private long position = 0;
 	private boolean EOF = false;
 
-	protected HybridInputStream(InputStream in, SeekableByteChannel chan)
+	HybridInputStream(InputStream in, SeekableByteChannel chan)
 	{
 		super(in);
 		this.chan = chan;

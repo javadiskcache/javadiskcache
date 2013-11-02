@@ -5,7 +5,7 @@
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
 	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
-*/
+ */
 package githup.funsheep.javadiskcache;
 
 import java.io.IOException;
@@ -14,9 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
 /**
- * 
  * @author work
- *
  */
 public class CachedInputStream extends InputStream
 {
@@ -25,18 +23,19 @@ public class CachedInputStream extends InputStream
 	private long inputPosition = 0;
 	private boolean closed = false;
 
-	public CachedInputStream(final InputStream in, SeekableByteChannel out, String uid)
+	CachedInputStream(final InputStream in, SeekableByteChannel out, String uid)
 	{
 		this(in, out, uid, false);
 	}
 
-	public CachedInputStream(final InputStream in, SeekableByteChannel out, String uid, boolean autoload)
+	CachedInputStream(final InputStream in, SeekableByteChannel out, String uid, boolean autoload)
 	{
 		CacheStreamLoader cin;
 		try
 		{
 			cin = CacheStreamLoader.getStream(in, out, uid, out.size(), autoload);
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			cin = CacheStreamLoader.getStream(in, out, uid, 0, autoload);
 		}
@@ -51,6 +50,9 @@ public class CachedInputStream extends InputStream
 		buffer.limit(0);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized int read() throws IOException
 	{
@@ -68,28 +70,34 @@ public class CachedInputStream extends InputStream
 		if (buffer.hasRemaining())
 			return buffer.get() & 0xff;
 
-
 		return -1;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized int read(byte b[]) throws IOException
 	{
 		return this.read(b, 0, b.length);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized int read(byte b[], int off, int len) throws IOException
 	{
 
-		if (!buffer.hasRemaining()) //fill buffer if empty
+		if (!buffer.hasRemaining()) // fill buffer if empty
 		{
 			buffer.clear();
 			final int read;
 			if ((read = cachedIn.read(inputPosition, buffer)) > 0)
 				inputPosition += read;
 
-			if (read == -1){
+			if (read == -1)
+			{
 				buffer.limit(0);
 				return read;
 			}
@@ -103,15 +111,20 @@ public class CachedInputStream extends InputStream
 		}
 
 		return -1;
-
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int available() throws IOException
 	{
 		return buffer.remaining() + cachedIn.available(inputPosition);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void close() throws IOException
 	{
@@ -123,24 +136,36 @@ public class CachedInputStream extends InputStream
 		cachedIn.close();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean markSupported()
 	{
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void mark(int readlimit)
 	{
 		// not supported
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void reset()
 	{
 		// not supported
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized long skip(long n) throws IOException
 	{
@@ -159,9 +184,10 @@ public class CachedInputStream extends InputStream
 		return remaining;
 	}
 
-	public static CachedInputStream getStreamFromLoader(String uid){
+	static CachedInputStream getStreamFromLoader(String uid)
+	{
 		CacheStreamLoader csl = CacheStreamLoader.getStream(uid);
-		if(csl == null)
+		if (csl == null)
 			return null;
 		return new CachedInputStream(csl);
 	}
