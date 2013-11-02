@@ -47,7 +47,8 @@ import java.util.UUID;
  */
 class FileCache
 {
-	private static final long NOT_AVAILABLE = -1;
+
+	static final long NOT_AVAILABLE = -1;
 	private static final Logger LOGGER = Logger.getLogger();
 	
 	private static FileCache INSTANCE = null;
@@ -90,10 +91,18 @@ class FileCache
 			LOGGER.warn("Could not create cache directory " + getCacheDir());
 		}
 	}
-
+	
 	public synchronized ReadableByteChannel getCachedByteChannel(String uid, InputStream input, long size, long lastModified) throws IOException
 	{
 		return Channels.newChannel(getCachedInputStream(uid, input, size, lastModified));
+	}
+
+	public synchronized InputStream getCachedInputStream(ICacheable cachable) throws IOException
+	{
+		InputStream cached = this.getCachedInputStream(cachable.uID(), null, cachable.size(), cachable.lastModified());
+		if (cached == null)
+			cached = this.getCachedInputStream(cachable.uID(), cachable.requestContent(), cachable.size(), cachable.lastModified());
+		return cached;
 	}
 
 	/**
