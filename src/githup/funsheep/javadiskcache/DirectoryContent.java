@@ -1,9 +1,9 @@
 /*
-	This file is part of the d3fact common library.
-	Copyright (C) 2005-2012 d3fact Project Team
-
+	This file is part of the java diskcache library.
+	Copyright (C) 2005-2013 funsheep, cgrote
+	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
-	You should have received a copy of the MPL along with this library; see the
+	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
 package githup.funsheep.javadiskcache;
@@ -39,12 +39,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class provides various methods to determine the content of a directory. It can constantly
- * watch a directory for changes or just scan on demand for to get it's content. This class is
+ * watch a directory for changes or just scan on demand to get its content. This class is
  * complete Thread-safe and makes sure a directory is only registered once to a watch service.
  *
  * @author cgrote
  */
-final public class DirectoryContent implements Closeable
+public final class DirectoryContent implements Closeable
 {
 	private static final Logger LOGGER = Logger.getLogger();
 	private static final ExecutorService threadPool = Executors.newCachedThreadPool();

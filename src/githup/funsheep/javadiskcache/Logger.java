@@ -1,9 +1,9 @@
 /*
-	This file is part of the d3fact common library.
-	Copyright (C) 2005-2012 d3fact Project Team
-
+	This file is part of the java diskcache library.
+	Copyright (C) 2005-2013 funsheep, cgrote
+	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
-	You should have received a copy of the MPL along with this library; see the
+	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
 package githup.funsheep.javadiskcache;
@@ -19,7 +19,7 @@ import java.util.logging.LogRecord;
 
 /**
  * Logger implementation which can be used with asserts.
- * @author Sven
+ * @author funsheep
  */
 class Logger
 {
@@ -29,19 +29,6 @@ class Logger
 
 	private final java.util.logging.Logger	logger;
 
-
-	// static
-	// {
-	// // only required/active until loggin configuration is loaded
-	// // comment to see the 4 SimpleFormatter log messages
-	// SmartFormatter smart = new SmartFormatter();
-	// Handler[] handler = ROOT.logger.getHandlers();
-	// for (int i=0;i<handler.length;i++)
-	// {
-	// handler[i].setLevel(Level.ALL);
-	// handler[i].setFormatter(smart);
-	// }
-	// }
 
 	/**
 	 * Constructor.

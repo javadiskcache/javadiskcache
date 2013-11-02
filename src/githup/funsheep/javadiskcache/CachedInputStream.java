@@ -1,9 +1,9 @@
 /*
-	This file is part of the d3fact common library.
-	Copyright (C) 2005-2012 d3fact Project Team
-
+	This file is part of the java diskcache library.
+	Copyright (C) 2005-2013 funsheep, cgrote
+	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
-	You should have received a copy of the MPL along with this library; see the
+	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
 package githup.funsheep.javadiskcache;
@@ -13,6 +13,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
+/**
+ * 
+ * @author work
+ *
+ */
 public class CachedInputStream extends InputStream
 {
 	private final CacheStreamLoader cachedIn;

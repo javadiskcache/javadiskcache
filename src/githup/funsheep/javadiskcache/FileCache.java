@@ -1,11 +1,11 @@
 /*
-	This file is part of the d3fact common library.
-	Copyright (C) 2005-2012 d3fact Project Team
-
+	This file is part of the java diskcache library.
+	Copyright (C) 2005-2013 funsheep, cgrote
+	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
-	You should have received a copy of the MPL along with this library; see the
+	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
- */
+*/
 package githup.funsheep.javadiskcache;
 
 import java.io.BufferedInputStream;
@@ -37,11 +37,13 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 /**
- * Transparent fileCache for InputStream with simple wrapping mechanism. Features: Detects multiple
- * stream for some id and automatically closes additional ones. Checks free-space on drive prior to
- * storing a file. Multiple Thread Support Multiple JVM support. Global cache-size limit with
- * LRU-Schema.
- * 
+ * Transparent fileCache for {@link InputStream} implementation with simple wrapping mechanism.
+ * Features:
+ * Detects multiple streams for a given id and automatically closes additional streams.
+ * Checks free-space on drive prior to storing a file.
+ * Multi-Thread Support and Multi-JVM support.
+ * Global cache-size limit with LRU-Schema.
+ *
  * @author cgrote
  */
 public class FileCache
@@ -50,7 +52,7 @@ public class FileCache
 	private static final long NOT_AVAILABLE = -1;
 	private static final String UniqueID = Tools.toBase64String(UUID.randomUUID().toString());
 	private static final Logger LOGGER = Logger.getLogger();
-	private static final Path cacheDir = Paths.get(Tools.userTempDir(), "cache");
+	private static final Path cacheDir = Paths.get(userTempDir(), "d3fact_cache");
 	private static final Path boundlessDir = Paths.get(cacheDir.toString(), "boundless");
 	private static final Path modifiedDir = Paths.get(cacheDir.toString(), "lastModified");
 	private static long currentSize = 0; // in Bytes
@@ -83,7 +85,7 @@ public class FileCache
 	 * If input is <i>null</i> it will return the local cache file with a matching id, size and
 	 * lastModified time-stamp. Use <i>-1</i> for size and lastModified to get the latest version of
 	 * the file. return null if no matching complete file can be found.
-	 * 
+	 *
 	 * @param id: unique name of the resource, should not change with different versions of the same
 	 *            file.
 	 */
@@ -337,7 +339,7 @@ public class FileCache
 
 	/**
 	 * Check file locks, perform cleanup if necessary.
-	 * 
+	 *
 	 * @return true if lock is valid, false otherwise.
 	 */
 	private static boolean checkLock(final Path lockFile)
@@ -530,15 +532,15 @@ public class FileCache
 
 	static Path getCacheDir()
 	{
-		return Paths.get(Tools.userTempDir(), "d3fact_cache");
+		return Paths.get(userTempDir(), "d3fact_cache");
 	}
 
 	static Path getCacheFile(String id, long size, long lastModified)
 	{
 		final String filename = getUID(id, size, lastModified);
 		if (size == -1)
-			return Paths.get(Tools.userTempDir(), "d3fact_cache", "boundless", filename);
-		return Paths.get(Tools.userTempDir(), "d3fact_cache", filename);
+			return Paths.get(userTempDir(), "d3fact_cache", "boundless", filename);
+		return Paths.get(userTempDir(), "d3fact_cache", filename);
 	}
 
 	static Path getLatestVersionCacheFile(String id)
@@ -556,7 +558,7 @@ public class FileCache
 			}
 		}
 		if (filename == null)
-			filename = Paths.get(Tools.userTempDir(), "d3fact_cache", "boundless", getUID(id, NOT_AVAILABLE, NOT_AVAILABLE));
+			filename = Paths.get(userTempDir(), "d3fact_cache", "boundless", getUID(id, NOT_AVAILABLE, NOT_AVAILABLE));
 
 		if (Files.notExists(filename))
 			return null;
@@ -675,4 +677,30 @@ public class FileCache
 
 		return true; // unknown file size, assume it's complete.
 	}
+	
+	private static String USER_TEMP_DIR;
+	public static final String userTempDir()
+	{
+		if (USER_TEMP_DIR == null)
+		{
+			StringBuilder sb = new StringBuilder(30);
+			String tmpdir = System.getProperty("java.io.tmpdir");
+			if (tmpdir.charAt(tmpdir.length()-1) != File.separatorChar)
+				tmpdir += File.separatorChar;
+			sb.append(tmpdir);
+			sb.append(Tools.getHex(System.getProperty("user.name").getBytes()));
+			sb.append(File.separatorChar);
+			USER_TEMP_DIR = sb.toString();
+
+			File path = new File(USER_TEMP_DIR);
+			if (!path.exists() && !path.mkdirs())
+			{
+				USER_TEMP_DIR = tmpdir;
+				LOGGER.warn("Could not create directory structure for path: " + path.toString() + " !");
+			}
+			LOGGER.info("Using temporary directory: " + USER_TEMP_DIR);
+		}
+		return USER_TEMP_DIR;
+	}
+
 }
