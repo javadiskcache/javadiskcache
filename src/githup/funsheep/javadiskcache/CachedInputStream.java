@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
 /**
- * @author work
+ * @author cgrote
  */
 public class CachedInputStream extends InputStream
 {

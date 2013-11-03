@@ -16,6 +16,7 @@ import java.nio.channels.SeekableByteChannel;
 
 /**
  * Load first from channel then from Stream.
+ * @author cgrote
  */
 class HybridInputStream extends FilterInputStream
 {

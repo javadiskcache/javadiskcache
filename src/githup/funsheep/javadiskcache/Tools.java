@@ -18,7 +18,7 @@ import org.apache.commons.codec.binary.Hex;
 
 /**
  * Helper functions used throughout the project.
- * @author work
+ * @author funsheep
  */
 class Tools
 {

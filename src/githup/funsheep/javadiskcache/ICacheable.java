@@ -8,13 +8,14 @@
 */
 package githup.funsheep.javadiskcache;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * Convenience-Interface for objects that can be cached by the {@link FileCache}.
  * The idea is to search for a cached file by {@link #uID()}, {@link #size()} and {@link #lastModified()}, if not found, finally the {@link #content()}
  * from the original source is request. This is especially useful when creating the {@link InputStream} is very expensive.
- * @author work
+ * @author funsheep
  */
 public interface ICacheable
 {
@@ -33,6 +34,7 @@ public interface ICacheable
 	/**
 	 * The current size of this content. 
 	 * @return The current size of the content or {@link #UNKNOWN} if not known or available.
+	 * @throws Throws an IOException if 
 	 */
 	public long size();
 	
@@ -46,6 +48,6 @@ public interface ICacheable
 	 * Requests the actual content for caching. This method is called only when no cached file could be found.
 	 * @return An {@link InputStream} that provides access to the actual content.
 	 */
-	public InputStream requestContent();
+	public InputStream requestContent() throws IOException;
 
 }

@@ -17,6 +17,7 @@ import java.nio.file.Path;
 
 /**
  * Release Lock on close and optionally delete files. Useful if lock-file != stream-file
+ * @author cgrote
  */
 class LockedInputStream extends FilterInputStream
 {

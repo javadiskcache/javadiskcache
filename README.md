@@ -67,7 +67,9 @@ if (cached == null)
 ```
  
 An implementation of this mechanism is readily provided by the `ICacheable` interface.
- 
+The package contains an URL wrapper for the `ICacheable` interface.
+The wrapper class `CacheableURL` uses the lightweight URLConnection mechanism to retrieve size and 'last modified' time stamp.
+
 ## Requirements ##
  * JRE >= v1.7
  * commons-codec >= v1.8 (is issued under the Apache License v2.0)
