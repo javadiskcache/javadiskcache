@@ -76,3 +76,11 @@ The wrapper class `CacheableURL` uses the lightweight URLConnection mechanism to
 
 ## License ##
  Mozilla Public License v2.0
+
+## Changelog ##
+
+#### v0.9.0 ####
+ * Initial Commit
+ * Added `ICacheable` interface
+ * Added `CacheableURL` wrapper
+ * Issues: add more javadoc
