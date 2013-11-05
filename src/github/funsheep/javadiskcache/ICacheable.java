@@ -19,7 +19,7 @@ import java.io.InputStream;
  */
 public interface ICacheable
 {
-	
+
 	/**
 	 * Constant indicating that the {@link #size()} or the {@link #lastModified()} time stamp is unknown.
 	 */
@@ -32,18 +32,18 @@ public interface ICacheable
 	public String uID();
 
 	/**
-	 * The current size of this content. 
+	 * The current size of this content.
 	 * @return The current size of the content or {@link #UNKNOWN} if not known or available.
-	 * @throws Throws an IOException if 
+	 * @throws Throws an IOException if
 	 */
 	public long size();
-	
+
 	/**
 	 * The 'last modified' time stamp for the content.
 	 * @return The 'last modified' time stamp for the content or {@link #UNKNOWN} if not known or available.
 	 */
 	public long lastModified();
-	
+
 	/**
 	 * Requests the actual content for caching. This method is called only when no cached file could be found.
 	 * @return An {@link InputStream} that provides access to the actual content.

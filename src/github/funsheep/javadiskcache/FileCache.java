@@ -1,9 +1,9 @@
 /*
 	This file is part of the java diskcache library.
 	Copyright (C) 2005-2013 funsheep, cgrote
-	
+
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
-	You should have received a copy of the MPL along with this library; see the 
+	You should have received a copy of the MPL along with this library; see the
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package github.funsheep.javadiskcache;
@@ -41,7 +41,7 @@ import java.util.UUID;
  * Features: Detects multiple streams for a given id and automatically closes additional streams.
  * Checks free-space on drive prior to storing a file. Multi-Thread Support and Multi-JVM support.
  * Global cache-size limit with LRU-Schema.
- * 
+ *
  * @author cgrote
  * @author funsheep
  */
@@ -50,7 +50,7 @@ public class FileCache
 
 	static final long NOT_AVAILABLE = -1;
 	private static final Logger LOGGER = Logger.getLogger();
-	
+
 	private static FileCache INSTANCE = null;
 
 	private final long sizelimit; // GB
@@ -67,7 +67,7 @@ public class FileCache
 	{
 		this(null, 1 * 1024 * 1024 * 1024);
 	}
-	
+
 	private FileCache(String name, long limit) throws IOException
 	{
 		if (name != null && name.length() > 0)
@@ -91,7 +91,7 @@ public class FileCache
 			LOGGER.warn("Could not create cache directory " + getCacheDir());
 		}
 	}
-	
+
 	public synchronized ReadableByteChannel getCachedByteChannel(String uid, InputStream input, long size, long lastModified) throws IOException
 	{
 		return Channels.newChannel(getCachedInputStream(uid, input, size, lastModified));
@@ -109,7 +109,7 @@ public class FileCache
 	 * If input is <i>null</i> it will return the local cache file with a matching id, size and
 	 * lastModified time-stamp. Use <i>-1</i> for size and lastModified to get the latest version of
 	 * the file. return null if no matching complete file can be found.
-	 * 
+	 *
 	 * @param id : unique name of the resource, should not change with different versions of the
 	 *            same file.
 	 */
@@ -256,7 +256,7 @@ public class FileCache
 		}
 		return currentSize;
 	}
-	
+
 	public long sizeLimit()
 	{
 		return this.sizelimit;
@@ -367,7 +367,7 @@ public class FileCache
 
 	/**
 	 * Check file locks, perform cleanup if necessary.
-	 * 
+	 *
 	 * @return true if lock is valid, false otherwise.
 	 */
 	private static boolean checkLock(final Path lockFile)

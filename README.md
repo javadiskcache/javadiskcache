@@ -76,6 +76,8 @@ The wrapper class `CacheableURL` uses the lightweight URLConnection mechanism to
 
 ## License ##
  Mozilla Public License v2.0
+ 
+ The original source code is part of the d3fact Project at <www.d3fact.de>
 
 ## Changelog ##
 

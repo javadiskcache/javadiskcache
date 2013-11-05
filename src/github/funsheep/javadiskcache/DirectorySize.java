@@ -1,9 +1,9 @@
 /*
 	This file is part of the java diskcache library.
 	Copyright (C) 2005-2013 funsheep, cgrote
-	
+
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
-	You should have received a copy of the MPL along with this library; see the 
+	You should have received a copy of the MPL along with this library; see the
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package github.funsheep.javadiskcache;
@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * This class provides various methods to determine the size of a directory. It can constantly watch
  * a directory for changes or just scan on demand to get its size. This class is complete
  * Thread-safe and makes sure a directory is only registered once to a watch service.
- * 
+ *
  * @author cgrote
  */
 public final class DirectorySize implements Closeable
@@ -342,7 +342,7 @@ public final class DirectorySize implements Closeable
 	/**
 	 * Determines the current size of the watched directory in bytes. </p> Note: Use the
 	 * getActualSize() method to make sure all queued changes are processed.
-	 * 
+	 *
 	 * @return the current size of the watched directory.
 	 */
 	public long getSize()
@@ -353,7 +353,7 @@ public final class DirectorySize implements Closeable
 	/**
 	 * Determines the current size of the watched directory, but unlike the getSize() method this
 	 * will make sure all queued changes are processed before this method returns.
-	 * 
+	 *
 	 * @return the current size of the watched directory in bytes, but unlike the getSize() method
 	 *         this will make sure all queued changes are processed before this method returns.
 	 */
@@ -367,7 +367,7 @@ public final class DirectorySize implements Closeable
 
 	/**
 	 * Scans the directory and return its size in bytes.
-	 * 
+	 *
 	 * @return the size of the directory in bytes.
 	 */
 	public static long directorySize(final Path directory)
@@ -378,7 +378,7 @@ public final class DirectorySize implements Closeable
 	/**
 	 * Scans the directory and return its size in bytes. If recursive is true, than all
 	 * sub-directories are included.
-	 * 
+	 *
 	 * @return the size of the directory in bytes.
 	 */
 	public static long directorySize(final Path directory, boolean recursive)
@@ -413,7 +413,7 @@ public final class DirectorySize implements Closeable
 	/**
 	 * Scans the directory and return its size in bytes. Unlike the directorySize() methods, this
 	 * makes sure all changes to the directory during the scan are represented in the size.
-	 * 
+	 *
 	 * @return the size of the directory in bytes.
 	 */
 	public static long directoryActualSize(Path directory)
@@ -425,7 +425,7 @@ public final class DirectorySize implements Closeable
 	 * Scans the directory and return its size in bytes. Unlike the directorySize() methods, this
 	 * makes sure all changes to the directory during the scan are represented in the size. If
 	 * recursive is true, than all sub-directories are included.
-	 * 
+	 *
 	 * @return the size of the directory in bytes.
 	 */
 	public static long directoryActualSize(Path directory, boolean recursive)

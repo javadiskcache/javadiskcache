@@ -28,7 +28,7 @@ class Tools
 
 	/**
 	 * Closes a {@link Closeable} while catching the exception. Checks for <code>null</code> reference.
-	 * @param s The {@link Closeable} to close. May be <code>null</code>. 
+	 * @param s The {@link Closeable} to close. May be <code>null</code>.
 	 */
 	public static void close(Closeable s)
 	{
@@ -61,7 +61,7 @@ class Tools
 
 
 	/**
-	 * Converts a given array of bytes into an URL save string (RFC 3548). 
+	 * Converts a given array of bytes into an URL save string (RFC 3548).
 	 * This method does the same as calling {@link #toBase64String(byte[])} with {@link String#getBytes()}.
 	 * @param a A string to convert.
 	 * @return A base64 representation of the given string.
@@ -72,7 +72,7 @@ class Tools
 	}
 
 	/**
-	 * Converts a given array of bytes into an URL save string (RFC 3548). 
+	 * Converts a given array of bytes into an URL save string (RFC 3548).
 	 * @param b The byte array to convert to base64.
 	 * @return A bes64 representation of the given bytes.
 	 */

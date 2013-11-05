@@ -21,16 +21,16 @@ import java.net.URLConnection;
  */
 public class CacheableURL implements ICacheable
 {
-	
+
 	/** Constant that specifies the timeout when connecting to the source the url points at. Can be changed when needed. */
 	public static int NETWORK_TIMEOUT = 10 * 1000;
 
 	private static final Logger LOGGER = Logger.getLogger();
-	
+
 
 	private final URL url;
 	private URLConnection connection;
-	
+
 
 	/**
 	 * Constructor.
