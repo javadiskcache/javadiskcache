@@ -6,7 +6,7 @@
 	You should have received a copy of the MPL along with this library; see the
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
-package githup.funsheep.javadiskcache;
+package github.funsheep.javadiskcache;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +22,7 @@ import java.net.URLConnection;
 public class CacheableURL implements ICacheable
 {
 	
+	/** Constant that specifies the timeout when connecting to the source the url points at. Can be changed when needed. */
 	public static int NETWORK_TIMEOUT = 10 * 1000;
 
 	private static final Logger LOGGER = Logger.getLogger();

@@ -79,6 +79,10 @@ The wrapper class `CacheableURL` uses the lightweight URLConnection mechanism to
 
 ## Changelog ##
 
+#### v0.9.1 ####
+ * Corrected visibility of FileCache
+ * Corrected typo in package name
+ 
 #### v0.9.0 ####
  * Initial Commit
  * Added `ICacheable` interface

@@ -6,7 +6,7 @@
 	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package githup.funsheep.javadiskcache;
+package github.funsheep.javadiskcache;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,15 +14,28 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
 /**
+ * Inputstream wrapper.
+ * Provides a seamless integration into the java.io package.
+ * This implementation is returned by the FileCache on calling {@link FileCache#getCachedInputStream(String, InputStream, long, long)}.
+ * 
  * @author cgrote
+ * @author funsheep
  */
-public class CachedInputStream extends InputStream
+class CachedInputStream extends InputStream
 {
+
 	private final CacheStreamLoader cachedIn;
 	private ByteBuffer buffer = ByteBuffer.allocate(8192);
 	private long inputPosition = 0;
 	private boolean closed = false;
 
+
+	/**
+	 * Constructor.
+	 * @param in An input stream connected to the original source or <code>null</code>.
+	 * @param out An byte channel connected to the cached file.
+	 * @param uid The unique ID of the source.
+	 */
 	CachedInputStream(final InputStream in, SeekableByteChannel out, String uid)
 	{
 		this(in, out, uid, false);

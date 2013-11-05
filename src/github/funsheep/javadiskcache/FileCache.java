@@ -6,7 +6,7 @@
 	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package githup.funsheep.javadiskcache;
+package github.funsheep.javadiskcache;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -45,7 +45,7 @@ import java.util.UUID;
  * @author cgrote
  * @author funsheep
  */
-class FileCache
+public class FileCache
 {
 
 	static final long NOT_AVAILABLE = -1;
